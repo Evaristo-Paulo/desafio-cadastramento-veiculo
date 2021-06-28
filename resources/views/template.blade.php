@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-br">
 
@@ -8,9 +7,9 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     @stack('css')
-    <link href="{{ asset('icon-font/lineicons.css')}}" rel="stylesheet">
+    <link href="{{ asset('icon-font/lineicons.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('style.css') }}">
-    <link rel="stylesheet" href="{{  url('responsive.css') }}">
+    <link rel="stylesheet" href="{{ url('responsive.css') }}">
     <title>eTips (4)</title>
 </head>
 
@@ -26,7 +25,7 @@
         <!-- END FOOTER-->
     </div>
     @include('partials.modal')
-    
+    @yield('filter')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="{{ asset('script.js') }}"></script>
     @stack('js')

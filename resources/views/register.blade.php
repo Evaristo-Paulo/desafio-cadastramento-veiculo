@@ -19,12 +19,20 @@
                 </select>
             </div>
             <div class="form-group">
-                <label for="brand">Marca <span class="required">*</span></label>
-                <input type="text" required name="brand" id="brand">
+                <select name="brand" id="">
+                    <option value="#" disabled>Selecionar marca</option>
+                    @foreach ( $brand_global as $brand )
+                        @if($brand->id == 1 )
+                            <option selected value="{{ $brand->id }}">{{ $brand->name }}</option>
+                        @else
+                            <option value="{{ $brand->id }}">{{ $brand->name }}</option>
+                        @endif
+                    @endforeach                
+                </select>
             </div>
             <div class="form-group">
-                <label for="model">Modelo <span class="required">*</span></label>
-                <input type="text" required name="model" id="model">
+                <label for="model">Modelo</label>
+                <input type="text"  name="model" id="model" value="{{ old('model') }}">
             </div>
             <div class="form-group">
                 <label for="version">Versão</label>
@@ -46,4 +54,26 @@
         margin: 0 !important;
     }
 </style>
+@endpush
+
+@push('js')
+<script>
+    /* Popular brand */
+    //$(function () {
+    //    $('#province').on('change', function (e) {
+    //        var province_id = e.target.value;
+    //        $('#municipe').empty();
+    //        //Ajax
+    //        $.get('/ajax-subcat?province_id=' + province_id, function (data) {
+    //            $('#municipe').append(
+    //                '<option selected disabled>Selecionar município</option>')
+    //            $.each(data, function (index, subcatObj) {
+    //                console.log(index)
+    //                $('#municipe').append('<option value="' + subcatObj.id +
+    //                    '">' + subcatObj.name + '</option>')
+    //            });
+    //        });
+    //    });
+    //});
+    </script>
 @endpush

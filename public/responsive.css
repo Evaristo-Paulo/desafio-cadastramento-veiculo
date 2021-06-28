@@ -1,85 +1,102 @@
-@media screen and (min-width: 767.5px){
-    .wrapper .header-detail{
+@media screen and (min-width: 767.5px) {
+    .wrapper .header-detail {
         flex-direction: row;
         justify-content: space-between;
         align-items: flex-end;
         padding: 10px 10%
     }
-    .wrapper .header-detail ul li{
+
+    .wrapper .header-detail ul li {
         display: inline-block;
         padding-right: 10px;
     }
-    .wrapper .header-detail ul.info li{
+
+    .wrapper .header-detail ul.info li {
         color: var(--main-color);
     }
-    .wrapper .header-detail ul li{
+
+    .wrapper .header-detail ul li {
         font-size: .8rem
     }
-    .wrapper .header-detail ul li a{
+
+    .wrapper .header-detail ul li a {
         font-size: .9rem
     }
-    .wrapper .header-detail ul.auth li:hover a{
+
+    .wrapper .header-detail ul.auth li:hover a {
         color: #fff
     }
-    .wrapper .header-detail ul.auth li{
+
+    .wrapper .header-detail ul.auth li {
         display: inline-block;
     }
-    .wrapper header nav{
+
+    .wrapper header nav {
         display: flex;
         justify-content: space-between;
         align-items: center;
         padding: 20px 10%
     }
-    .wrapper header nav > a, .wrapper header nav .nav-group{
+
+    .wrapper header nav>a,
+    .wrapper header nav .nav-group {
         display: block;
     }
-    .wrapper header nav .nav-group li{
+
+    .wrapper header nav .nav-group li {
         display: inline-block;
         margin: 5px;
         padding: 8px;
         position: relative;
     }
-    
-    .wrapper header nav .nav-group li::after{
+
+    .wrapper header nav .nav-group li::after {
         content: "";
         width: 100%;
         height: 2px;
         position: absolute;
-        bottom:0;
+        bottom: 0;
         left: 0;
         background-color: transparent;
         clip-path: inset(100% 100% 100% 100%);
         transition: clip-path .5s ease-in-out;
     }
-    .wrapper header nav .nav-group li:hover::after{
+
+    .wrapper header nav .nav-group li:hover::after {
         background-color: #D12136;
         clip-path: inset(0% 0% 0% 0%);
     }
-    
-    .wrapper header nav .nav-group li a{
-        padding: 10px 
+
+    .wrapper header nav .nav-group li a {
+        padding: 10px
     }
-    .wrapper header nav .nav-group li:hover a{
+
+    .wrapper header nav .nav-group li:hover a {
         color: var(--main-color)
     }
+
     .menu-icon-mobile {
         position: relative;
         display: none;
     }
+
     .banner {
         flex-direction: row;
 
     }
+
     .banner .wrapper-svg {
         height: 500px;
         overflow: visible;
         padding: 20px;
         background-color: var(--main-bg-color);
     }
+
     .banner svg {
         top: 80px;
         width: 90%;
     }
+
     .banner .info {
         display: flex;
         width: 60%;
@@ -88,13 +105,16 @@
         justify-content: center;
         flex-direction: column;
     }
+
     .why-us {
         padding: 20px 10%
     }
+
     .content {
         padding: 10%;
     }
-    footer .info{
+
+    footer .info {
         display: flex;
         padding: 5% 10%;
         justify-content: space-between;
@@ -102,6 +122,25 @@
 
     .modal-container {
         width: 500px;
+    }
+
+    .modalFilter .modal-body {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-direction: row;
+    }
+    .modalFilter .modal-container {
+        width: 90%;
+    }
+    .modalFilter .filter-item {
+        color: #fff;
+        padding: 20px;
+        width: 100%;
+    }
+    .modalFilter .modal-body {
+        height: auto;
+        overflow: auto;
     }
     .register {
         width: 500px;
@@ -115,15 +154,31 @@
     .wrapper .header-detail li.item.user {
         display: none;
     }
+
+    .content .tips {
+        grid-template-columns: repeat(auto-fit, minmax(280px, .5fr));
+    }
+    .inner {
+        display: none;
+    }
+
 }
 
-@media screen and (min-width: 1024.5px){
-    .why-us .reason{
+@media screen and (min-width: 1024.5px) {
+    .why-us .reason {
         border: 1px dotted var(--border-color);
     }
-    .content .tips .item{
+
+    .content .tips .item {
         border: 0
     }
 
-   
+    .content .tips {
+        grid-template-columns: repeat(auto-fit, minmax(300px, .5fr));
+    }
+
+    .modalFilter .modal-container {
+        width: 800px;
+    }
+
 }

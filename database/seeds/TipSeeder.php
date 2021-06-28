@@ -15,22 +15,18 @@ class TipSeeder extends Seeder
         Tip::create([
             'user_id' => 1,
             'modelo_id' => 1,
-            'brand_id' => 5,
         ]);
         Tip::create([
             'user_id' => 2,
             'modelo_id' => 2,
-            'brand_id' => 1,
         ]);
         Tip::create([
             'user_id' => 1,
             'modelo_id' => 3,
-            'brand_id' => 1,
         ]);
         Tip::create([
             'user_id' => 1,
             'modelo_id' => 4,
-            'brand_id' => 5,
         ]);
     }
 }

@@ -19,8 +19,6 @@ class CreateTipsTable extends Migration
             $table->bigInteger('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->bigInteger('modelo_id')->unsigned();
-            $table->bigInteger('brand_id')->unsigned();
-            $table->foreign('brand_id')->references('id')->on('brands')->onDelete('cascade');
             $table->foreign('modelo_id')->references('id')->on('modelos')->onDelete('cascade');
             $table->timestamps();
         });

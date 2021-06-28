@@ -19,8 +19,16 @@
                 </select>
             </div>
             <div class="form-group">
-                <label for="brand">Marca <span class="required">*</span></label>
-                <input type="text" required name="brand" id="brand" value="{{ $tip->brand }}">
+                <select name="brand" id="">
+                    <option value="#" disabled>Selecionar marca</option>
+                    @foreach( $brand_global as $brand )
+                        @if($brand->id ==  $model_global->where('id',$tip->modelo_id)->first()->brand_id )
+                            <option selected value="{{ $brand->id }}">{{ $brand->name }}</option>
+                        @else
+                            <option value="{{ $brand->id }}">{{ $brand->name }}</option>
+                        @endif
+                    @endforeach
+                </select>
             </div>
             <div class="form-group">
                 <label for="model">Modelo <span class="required">*</span></label>

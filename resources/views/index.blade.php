@@ -20,33 +20,38 @@
         </article>
     </section>
     <!-- END WHY US-->
-    <main class="content">
-        <h2 class="title">Dicas</h2>
-        <p class="filter-type">12 resultado(s) encontrado(s) na filtragem</p>
+    <main class="content" id="all-tips">
+        <h2 class="title">Todas as dicas</h2>
+        <h2 class="filter-title link-btn">Filtro</h2>
+        @if ($filterResult != -1 )
+        <p class="filter-type">{{ $filterResult }} resultado(s) encontrado(s) na filtragem</p>
+        @endif
         <section class="tips">
             @forelse ( $tips as $tip )
-            <article class="item">
-                <p>Tipo: <span class="info">{{  $tip->type }}</span></p>
-                <p>Marca: <span class="info">{{  $tip->brand }}</span></p>
-                <p>Modelo: <span class="info">{{  $tip->model }}</span></p>
-                <p>Versão: <span class="info">
-                    @if($tip_version_global->where('tip_id',  $tip->id )->first())
-                        {{ $version_global->where('id', $tip_version_global->where('tip_id',  $tip->id )->first()->version_id)->first()->name }}
-                    @else
-                        
-                    @endif
-                </span></p>
-                <div class="writter">
-                    <p>Escrito por {{  $tip->writter }}</p>
-                    <div class="cover">
-                        <img src="image/default.png" alt="evaristo-paulo">
+                <article class="item">
+                    <p>Tipo: <span class="info">{{  $tip->type }}</span></p>
+                    <p>Marca: <span class="info">{{  $tip->brand }}</span></p>
+                    <p>Modelo: <span class="info">{{  $tip->model }}</span></p>
+                    <p>Versão: <span class="info">
+                        @if($tip_version_global->where('tip_id',  $tip->id )->first())
+                            {{ $version_global->where('id', $tip_version_global->where('tip_id',  $tip->id )->first()->version_id)->first()->name }}
+                        @else
+                            
+                        @endif
+                    </span></p>
+                    <div class="writter">
+                        <p>Registado por {{  $tip->writter }}</p>
+                        <div class="cover">
+                            <img src="{{ url('image/default.png') }}" alt="evaristo-paulo">
+                        </div>
                     </div>
-                </div>
-            </article>
+                </article>
             @empty
-                
+                <h2 class="title">Sem dicas registadas</h2>
             @endforelse
-            
         </section>
     </main>
+    @endsection
+    @section('filter')
+    @include('partials.filter')
     @endsection

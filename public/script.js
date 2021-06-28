@@ -23,11 +23,12 @@ if (menuIcon) {
 var modal = document.querySelectorAll('.modal')
 var modalLogin = document.querySelector('.modalLogin')
 var modalCreate = document.querySelector('.modalCreate')
+var modalFilter = document.querySelector('.modalFilter')
 
 if (modal) {
     for (let i = 0; i < modal.length; i++) {
         modal[i].addEventListener('click', (e) => {
-            if (e.target.className === 'modalCreate modal' || e.target.className === 'modalLogin modal') {
+            if (e.target.className === 'modalCreate modal' || e.target.className === 'modalLogin modal' || e.target.className === 'modalFilter modal') {
                 modal[i].style.display = 'none'
             }
         })
@@ -53,6 +54,13 @@ if (create) {
             modalCreate.style.display = 'block'
         })
     }
+}
+
+var filterTip = document.querySelector('.filter-title')
+if (filterTip) {
+    filterTip.addEventListener('click', () => {
+        modalFilter.style.display = 'block'
+    })
 }
 
 
@@ -92,7 +100,6 @@ if (form) {
                 document.querySelector('.custom-spinner').style.display = 'none'
                 document.querySelector('.alert-danger').style.display = 'block'
                 setTimeout(() => {
-                    form.reset();
                     document.querySelector('.alert-danger').style.display = 'none'
                 }, 4000);
             }

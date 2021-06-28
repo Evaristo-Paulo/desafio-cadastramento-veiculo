@@ -20,6 +20,8 @@ class CreateModelosTable extends Migration
             $table->integer('active')->default(1);
             $table->bigInteger('type_id')->unsigned();
             $table->foreign('type_id')->references('id')->on('types')->onDelete('cascade');
+            $table->bigInteger('brand_id')->unsigned();
+            $table->foreign('brand_id')->references('id')->on('brands')->onDelete('cascade');
             $table->timestamps();
         });
     }

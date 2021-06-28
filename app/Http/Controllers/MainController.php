@@ -14,13 +14,15 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use RealRashid\SweetAlert\Facades\Alert;
+use Illuminate\Support\Facades\Validator;
 
 class MainController extends Controller
 {
     public function index()
     {
         try {
-
+            $filterBrand = $filterType = $filterVersion = $filterModel = 'todas';
+            $filterResult = -1;
             $tips = \DB::table('tips')
                 ->join('users', function ($join) {
                     $join->on('tips.user_id', '=', 'users.id')
@@ -31,7 +33,7 @@ class MainController extends Controller
                         ->where([['modelos.active', '=', 1]]);
                 })
                 ->join('brands', function ($join) {
-                    $join->on('tips.brand_id', '=', 'brands.id')
+                    $join->on('modelos.brand_id', '=', 'brands.id')
                         ->where([['brands.active', '=', 1]]);
                 })
                 ->join('types', function ($join) {
@@ -39,9 +41,10 @@ class MainController extends Controller
                         ->where([['types.active', '=', 1]]);
                 })
                 ->select('tips.*', 'users.name as writter', 'brands.name as brand', 'types.name as type', 'modelos.name as model')
+                ->orderBy('tips.id', 'desc')
                 ->get();
 
-            return view('index', compact('tips'));
+            return view('index', compact('tips', 'filterResult', 'filterType', 'filterBrand', 'filterModel', 'filterVersion'));
         } catch (\Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }
@@ -56,26 +59,36 @@ class MainController extends Controller
                 }
                 return redirect()->route('etips.index');
             }
-            $name = $request->input('model');
+
+            $validator = Validator::make($request->all(), [
+                'type' => 'required',
+                'model' => 'required',
+                'brand' => 'required',
+            ], [
+                'type.required' => 'Preenche o campo tipo',
+                'model.required' => 'Preenche o campo modelo',
+                'brand.required' => 'Preenche o campo marca',
+            ]);
+
+            if ($validator->fails()) {
+                session()->flash('error', 'Dica não cadastrada. Verifique os dados e tenta novamente');
+                if (session('error')) {
+                    Alert::toast(session('error'), 'error');
+                }
+                return redirect()->back()->withErrors($validator->errors())->withInput();
+            }
 
             $new = [
-                'name' => $name,
-                'slug' => Str::slug($name),
+                'name' => $request->input('model'),
+                'slug' => Str::slug($request->input('name')),
                 'type_id' => Type::where('id', $request->input('type'))->first()->id,
-            ];
-            $result1 = Modelo::create($new);
-
-            $name = $request->input('brand');
-            $new = [
-                'name' => $name,
-                'slug' => Str::slug($name),
+                'brand_id' => Brand::where('id', $request->input('brand'))->first()->id,
             ];
 
-            $result = Brand::create($new);
+            $result = Modelo::create($new);
 
             $new = [
-                'modelo_id' => $result1->id,
-                'brand_id' => $result->id,
+                'modelo_id' => $result->id,
                 'user_id' => Auth::user()->id,
             ];
 
@@ -121,6 +134,24 @@ class MainController extends Controller
                 return redirect()->route('etips.index');
             }
 
+            $validator = Validator::make($request->all(), [
+                'type' => 'required',
+                'model' => 'required',
+                'brand' => 'required',
+            ], [
+                'type.required' => 'Preenche o campo tipo',
+                'model.required' => 'Preenche o campo modelo',
+                'brand.required' => 'Preenche o campo marca',
+            ]);
+
+            if ($validator->fails()) {
+                session()->flash('error', 'Dica não actualizada. Verifique os dados e tenta novamente');
+                if (session('error')) {
+                    Alert::toast(session('error'), 'error');
+                }
+                return redirect()->back()->withErrors($validator->errors())->withInput();
+            }
+
             $tip = Tip::where('id', $id)->first();
 
             $name = $request->input('model');
@@ -129,22 +160,11 @@ class MainController extends Controller
                 'name' => $name,
                 'slug' => Str::slug($name),
                 'type_id' => Type::where('id', $request->input('type'))->first()->id,
+                'brand_id' => Brand::where('id', $request->input('brand'))->first()->id,
             ];
 
             \DB::table('modelos')
                 ->where('id', $tip->modelo_id)
-                ->update($new);
-
-
-            $name = $request->input('brand');
-
-            $new = [
-                'name' => $name,
-                'slug' => Str::slug($name),
-            ];
-
-            \DB::table('brands')
-                ->where('id', $tip->brand_id)
                 ->update($new);
 
             if ($request->input('version')) {
@@ -209,7 +229,7 @@ class MainController extends Controller
                     ->where([['modelos.active', '=', 1], ['tips.id', '=', $id]]);
             })
             ->join('brands', function ($join) {
-                $join->on('tips.brand_id', '=', 'brands.id')
+                $join->on('modelos.brand_id', '=', 'brands.id')
                     ->where([['brands.active', '=', 1]]);
             })
             ->join('types', function ($join) {
@@ -274,7 +294,7 @@ class MainController extends Controller
                         ->where([['modelos.active', '=', 1]]);
                 })
                 ->join('brands', function ($join) {
-                    $join->on('tips.brand_id', '=', 'brands.id')
+                    $join->on('modelos.brand_id', '=', 'brands.id')
                         ->where([['brands.active', '=', 1]]);
                 })
                 ->join('types', function ($join) {
@@ -302,12 +322,30 @@ class MainController extends Controller
                 'password' => $request->input('password')
             ];
 
+
+            $validator = Validator::make($request->all(), [
+                'email' => 'required|email',
+                'password' => 'required'
+            ], [
+                'password.required' => 'Preenche o campo senha',
+                'email.required' => 'Preenche o campo email',
+                'email.email' => 'Informa email válido',
+            ]);
+
+            if ($validator->fails()) {
+                session()->flash('error', 'Ops! Verifique os dados e tenta novamente');
+                if (session('error')) {
+                    Alert::toast(session('error'), 'error');
+                }
+                return redirect()->back()->withErrors($validator->errors())->withInput();
+            }
+
             if (Auth::attempt($credentials)) {
                 Auth::logoutOtherDevices($request->input('password'));
                 $user = auth()->user();
                 Auth::login($user);
 
-                $request->session()->flash('success', 'Seja bem-vindo(a), '. Auth::user()->name. '');
+                $request->session()->flash('success', 'Seja bem-vindo(a), ' . Auth::user()->name . '');
                 if (session('success')) {
                     Alert::toast(session('success'), 'success');
                 }
@@ -323,19 +361,201 @@ class MainController extends Controller
         }
     }
 
+    
+    public function filterByBrand($slug)
+    {
+        try {
+            $filterBrand = $slug;
+            $filterType = $filterVersion = $filterModel = 'todas';
+
+            $tips = \DB::table('tips')
+                ->join('users', function ($join) {
+                    $join->on('tips.user_id', '=', 'users.id')
+                        ->where([['tips.active', '=', 1]]);
+                })
+                ->join('modelos', function ($join) {
+                    $join->on('tips.modelo_id', '=', 'modelos.id')
+                        ->where([['modelos.active', '=', 1]]);
+                })
+                ->join('brands', function ($join) use ($slug) {
+                    $join->on('modelos.brand_id', '=', 'brands.id')
+                        ->where([['brands.active', '=', 1], ['brands.slug', '=', $slug]]);
+                })
+                ->join('types', function ($join) {
+                    $join->on('modelos.type_id', '=', 'types.id')
+                        ->where([['types.active', '=', 1]]);
+                })
+                ->select('tips.*', 'users.name as writter', 'brands.name as brand', 'types.name as type', 'modelos.name as model')
+                ->orderBy('tips.id', 'desc')
+                ->get();
+
+            $filterResult = count($tips);
+
+            session()->flash('success', 'Filtro aplicado com sucesso');
+            if (session('success')) {
+                Alert::toast(session('success'), 'success');
+            }
+            return view('index', compact('tips', 'filterResult', 'filterType', 'filterBrand', 'filterModel', 'filterVersion'));
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+    }
+    public function filterByModel($slug)
+    {
+        try {
+            $filterModel = $slug;
+            $filterType = $filterVersion = $filterBrand = 'todas';
+
+            $tips = \DB::table('tips')
+                ->join('users', function ($join) {
+                    $join->on('tips.user_id', '=', 'users.id')
+                        ->where([['tips.active', '=', 1]]);
+                })
+                ->join('modelos', function ($join)  use ($slug) {
+                    $join->on('tips.modelo_id', '=', 'modelos.id')
+                        ->where([['modelos.active', '=', 1], ['modelos.slug', '=', $slug]]);
+                })
+                ->join('brands', function ($join){
+                    $join->on('modelos.brand_id', '=', 'brands.id')
+                        ->where([['brands.active', '=', 1]]);
+                })
+                ->join('types', function ($join) {
+                    $join->on('modelos.type_id', '=', 'types.id')
+                        ->where([['types.active', '=', 1]]);
+                })
+                ->select('tips.*', 'users.name as writter', 'brands.name as brand', 'types.name as type', 'modelos.name as model')
+                ->orderBy('tips.id', 'desc')
+                ->get();
+
+            $filterResult = count($tips);
+
+            session()->flash('success', 'Filtro aplicado com sucesso');
+            if (session('success')) {
+                Alert::toast(session('success'), 'success');
+            }
+            return view('index', compact('tips', 'filterResult', 'filterType', 'filterBrand', 'filterModel', 'filterVersion'));
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+    }
+    
+    public function filterByVersion($name)
+    {
+        try {
+            $filterVersion= $name;
+            $filterType = $filterModel = $filterBrand = 'todas';
+
+            $tips = \DB::table('tips')
+                ->join('users', function ($join) {
+                    $join->on('tips.user_id', '=', 'users.id')
+                        ->where([['tips.active', '=', 1]]);
+                })
+                ->join('modelos', function ($join){
+                    $join->on('tips.modelo_id', '=', 'modelos.id')
+                        ->where([['modelos.active', '=', 1]]);
+                })
+                ->join('tip_versions', function ($join){
+                    $join->on('tips.id', '=', 'tip_versions.tip_id')
+                        ->where([['tips.active', '=', 1]]);
+                })
+                ->join('versions', function ($join)  use ($name) {
+                    $join->on('tip_versions.version_id', '=', 'versions.id')
+                        ->where([['versions.name', '=', $name]]);
+                })
+                ->join('brands', function ($join){
+                    $join->on('modelos.brand_id', '=', 'brands.id')
+                        ->where([['brands.active', '=', 1]]);
+                })
+                ->join('types', function ($join) {
+                    $join->on('modelos.type_id', '=', 'types.id')
+                        ->where([['types.active', '=', 1]]);
+                })
+                ->select('tips.*', 'users.name as writter', 'brands.name as brand', 'types.name as type', 'modelos.name as model')
+                ->orderBy('tips.id', 'desc')
+                ->get();
+
+            $filterResult = count($tips);
+
+            session()->flash('success', 'Filtro aplicado com sucesso');
+            if (session('success')) {
+                Alert::toast(session('success'), 'success');
+            }
+            return view('index', compact('tips', 'filterResult', 'filterType', 'filterBrand', 'filterModel', 'filterVersion'));
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+    }
+
+    public function filterByType($slug)
+    {
+        try {
+            $filterType = $slug;
+            $filterBrand = $filterVersion = $filterModel = 'todas';
+
+            $tips = \DB::table('tips')
+                ->join('users', function ($join) {
+                    $join->on('tips.user_id', '=', 'users.id')
+                        ->where([['tips.active', '=', 1]]);
+                })
+                ->join('modelos', function ($join) {
+                    $join->on('tips.modelo_id', '=', 'modelos.id')
+                        ->where([['modelos.active', '=', 1]]);
+                })
+                ->join('brands', function ($join) {
+                    $join->on('modelos.brand_id', '=', 'brands.id')
+                        ->where([['brands.active', '=', 1]]);
+                })
+                ->join('types', function ($join) use ($slug) {
+                    $join->on('modelos.type_id', '=', 'types.id')
+                        ->where([['types.active', '=', 1], ['types.slug', '=', $slug]]);
+                })
+                ->select('tips.*', 'users.name as writter', 'brands.name as brand', 'types.name as type', 'modelos.name as model')
+                ->orderBy('tips.id', 'desc')
+                ->get();
+
+            $filterResult = count($tips);
+
+            session()->flash('success', 'Filtro aplicado com sucesso');
+            if (session('success')) {
+                Alert::toast(session('success'), 'success');
+            }
+            return view('index', compact('tips', 'filterResult', 'filterType', 'filterBrand', 'filterModel', 'filterVersion'));
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+    }
+
+
     public function registerUser(Request $request)
     {
         try {
+
+            $validator = Validator::make($request->all(), [
+                'name' => 'required|min:3',
+                'email' => 'required|email|unique:users,email',
+                'password' => 'required|min:6',
+            ], [
+                'name.required' => 'Preenche o campo nome',
+                'name.min' => 'Nome deve ter no mínimo 3 caracteres',
+                'email.required' => 'Preenche o campo email',
+                'email.unique' => 'Este email já está sendo utilizado',
+                'email.email' => 'Informa email válido',
+                'password.required' => 'Preenche o campo senha',
+                'password.min' => 'Senha deve ter no mínimo 6 caracteres',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json($validator->errors(), 422);
+            }
             $user = new User();
 
             $user->name = $request->input('name');
             $user->email = $request->input('email');
             $user->password = Hash::make($request->input('password'));
             $user->save();
-
             return response()->json($request);
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', $e->getMessage());
+            return response()->json($e->getMessage());
         }
     }
 

@@ -13,8 +13,8 @@ class DatabaseSeeder extends Seeder
     {
        $this->call(UserSeeder::class);
        $this->call(TypeSeeder::class);
-       $this->call(ModelSeeder::class);
        $this->call(BrandSeeder::class);
+       $this->call(ModelSeeder::class);
        $this->call(VersionSeeder::class);
        $this->call(TipSeeder::class);
        $this->call(TipVersionSeeder::class);

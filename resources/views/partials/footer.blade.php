@@ -11,6 +11,9 @@
                 <a href="#reason">Nosso Diferencial</a>
             </li>
             <li class="item">
+                <a href="#all-tips">Dicas</a>
+            </li>
+            <li class="item">
                 <a href="{{ route('etips.register') }}">Registar Dica</a>
             </li>
         </ul>

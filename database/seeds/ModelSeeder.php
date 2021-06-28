@@ -16,22 +16,26 @@ class ModelSeeder extends Seeder
         Modelo::create([
             'name' => 'CRF450RX',
             'slug' => 'crf450rx',
-            'type_id' => 1
+            'type_id' => 1,
+            'brand_id' => 5,
         ]);
         Modelo::create([
             'name' => 'California',
             'slug' => 'california',
-            'type_id' => 2
+            'type_id' => 2,
+            'brand_id' => 1,
         ]);
         Modelo::create([
             'name' => 'F599 GTO',
             'slug' => 'f599-gto',
-            'type_id' => 2
+            'type_id' => 2,
+            'brand_id' => 1,
         ]);
         Modelo::create([
             'name' => 'HR-V',
             'slug' => 'hr-v',
-            'type_id' => 3
+            'type_id' => 3,
+            'brand_id' => 5,
         ]);
     }
 }

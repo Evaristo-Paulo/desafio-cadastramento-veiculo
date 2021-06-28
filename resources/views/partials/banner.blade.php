@@ -6,6 +6,9 @@
         <li class="item">
             <a href="#reason">Nosso Diferencial</a>
         </li>
+        <li class="item">
+            <a href="#all-tips">Dicas</a>
+        </li>
         <li class="item dropdown-menu">
             <a href="{{ route('etips.register') }}">Registar Dica</a>
         </li>
